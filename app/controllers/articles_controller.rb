@@ -8,7 +8,14 @@ class ArticlesController < ApplicationController
 
   def show
     article = Article.find(params[:id])
-    render json: article
+    session[:pageviews_remaining] ||= 3
+    if session[:pageviews_remaining] > 0 
+      session[:pageviews_remaining] -=1
+      render json: article
+    else
+      render json: { error: "Free blog reads limit reached" }, 
+      status: :unauthorized
+    end 
   end
 
   private
